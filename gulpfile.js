@@ -1,28 +1,34 @@
-var gulp     = require('gulp'),
-    rename   = require('gulp-rename'),
-    uglify   = require('gulp-uglify'),
+var gulp        = require('gulp'),
+    rename      = require('gulp-rename'),
+    uglify      = require('gulp-uglify'),
     minifyCss   = require('gulp-minify-css'),
-    coffee   = require('gulp-coffee'),
-    gutil    = require('gulp-util'),
-    compass  = require('gulp-compass'),
-    notify   = require('gulp-notify'),
-    browserSync = require('browser-sync');
+    coffee      = require('gulp-coffee'),
+    gutil       = require('gulp-util'),
+    compass     = require('gulp-compass'),
+    notify      = require('gulp-notify'),
+    browserSync = require('browser-sync'),
+    path        = {
+        sass: './src/sass/',
+        coffee: './src/coffee/',
+        js: './public/js/',
+        css: './public/css/'
+    };
 
 gulp.task('compass', function() {
-    gulp.src('./src/sass/*.sass')
+    gulp.src(path.sass + '**/*.sass')
         .pipe(compass({
-            config_file: './src/sass/config.rb',
-            css: './public/css',
-            sass: './src/sass'
+            config_file: path.sass + 'config.rb',
+            css: path.css,
+            sass: path.sass
         }))
         .pipe(minifyCss())
         .pipe(notify("<%= file.relative %>"))
-        .pipe(gulp.dest('./public/css'))
+        .pipe(gulp.dest(path.css))
         .pipe(browserSync.stream());
 });
 
 gulp.task('coffee', function() {
-    gulp.src('./src/coffee/*.coffee')
+    gulp.src(path.coffee + '**/*.coffee')
         .pipe(coffee({
             bare: true
         }))
@@ -32,7 +38,7 @@ gulp.task('coffee', function() {
             suffix: '.min'
         }))
         .pipe(notify("<%= file.relative %>"))
-        .pipe(gulp.dest('./public/js'))
+        .pipe(gulp.dest(path.js))
         .pipe(browserSync.stream());
 });
 
@@ -42,8 +48,8 @@ gulp.task('watch', function() {
             baseDir:"./"
         }
     });
-    gulp.watch('./src/sass/**/*.s*ss', ['compass']);
-    gulp.watch('./src/coffee/**/*.coffee', ['coffee']);
+    gulp.watch(path.sass + '**/*.s*ss', ['compass']);
+    gulp.watch(path.coffee+ '**/*.coffee', ['coffee']);
 });
 
 gulp.task('default', ['compass', 'coffee', 'watch']);
